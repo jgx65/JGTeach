@@ -7,7 +7,7 @@
 #'
 #'
 #'
-#' @usage thet.bet.2pops((mu=10^-8,m1=10^-4,m2=10^-4,n1=1000,n2=1000,ngen=100,plotit=TRUE))
+#' @usage thet.bet.2pops(mu=10^-8,m1=10^-4,m2=10^-4,n1=1000,n2=1000,ngen=100,plotit=TRUE)
 #'
 #' @param mu mutation rate
 #' @param m1 immigration into pop1
@@ -15,7 +15,7 @@
 #' @param n1 size of pop1
 #' @param n2 size of pop2
 #' @param ngen number of generations
-#' @param plotit
+#' @param plotit whether to plot the resulting object
 #'
 #' @return a list with elements
 #' \itemize{
@@ -29,8 +29,8 @@
 #' of Population Structure and Relatedness.
 #'  }
 #'
-#'  @example
-#'  \notrun{
+#'  @examples
+#' \dontrun{
 #'  # reproduces fig 1 in Weir and Goudet (2017)
 #'  #top row
 #'  thet.bet.2pops(mu=0.0,m2=0.0,m1=0.0,n1=10000,n2=100,ngen=10000)
@@ -43,7 +43,7 @@
 #'
 #' @export
 
-thet.bet.2pops<-function(mu=10^-8,m1=10^-4,m2=10^-4,n1=10000,n2=100,ngen=100,plotit=TRUE){
+thet.bet.2pops<-function(mu=10^-8,m1=10^-4,m2=10^-4,n1=1000,n2=1000,ngen=100,plotit=TRUE){
   a<-(1-mu)^2
   b1<-(1-m1)^2
   b2<-(1-m2)^2
@@ -67,22 +67,22 @@ thet.bet.2pops<-function(mu=10^-8,m1=10^-4,m2=10^-4,n1=10000,n2=100,ngen=100,plo
   betas[,2]<-(y[,2]-y[,3])/(1-y[,3])
   betas[,3]<-(betas[,1]+betas[,2])/2
   if(plotit){
-    par(mfrow=c(1,2))
-    plot(1:ngen,y[,1],ylim=range(y),xlab="Generations",
+    graphics::par(mfrow=c(1,2))
+    graphics::plot(1:ngen,y[,1],ylim=range(y),xlab="Generations",
          ylab=expression(theta),col="red",type="l",lwd=2)
-    lines(1:ngen,y[,2],col="blue",lwd=2)
-    lines(1:ngen,y[,3],col="orange",lwd=2)
-    legend("bottomright",c(expression(theta^{11}),expression(theta^{22}),
+    graphics::lines(1:ngen,y[,2],col="blue",lwd=2)
+    graphics::lines(1:ngen,y[,3],col="orange",lwd=2)
+    graphics::legend("bottomright",c(expression(theta^{11}),expression(theta^{22}),
                            expression(theta^{12})),col = c("red","blue","orange"),lwd=2)
-    title(paste("mu: ",mu,"; m1: ",m1,"; m2: ",m2,"\n",
+    graphics::title(paste("mu: ",mu,"; m1: ",m1,"; m2: ",m2,"\n",
                 "N1: ",n1,"; N2: ",n2,sep="",collapse=""))
-    plot(1:ngen,betas[,1],ylim=range(betas,na.rm=TRUE),xlab="Generations",
+    graphics::plot(1:ngen,betas[,1],ylim=range(betas,na.rm=TRUE),xlab="Generations",
          ylab=expression(beta),type="l",col="red",lwd=2)
-    lines(1:ngen,betas[,2],col="blue",lwd=2)
-    lines(1:ngen,betas[,3],col="black",lwd=2)
-    legend("bottomright",c(expression(beta^{11}),expression(beta^{22}),
+    graphics::lines(1:ngen,betas[,2],col="blue",lwd=2)
+    graphics::lines(1:ngen,betas[,3],col="black",lwd=2)
+    graphics::legend("bottomright",c(expression(beta^{11}),expression(beta^{22}),
                            expression(beta^{W})),col = c("red","blue","black"),lwd=2)
-    par(mfrow=c(1,1))
+    graphics::par(mfrow=c(1,1))
   }
   return(list(Th=y,Be=betas))
 }
