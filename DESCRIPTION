@@ -7,6 +7,8 @@ Maintainer: Jerome Goudet <jerome.goudet@unil.ch>
 Description: A collection of (documented) functions
     useful for teaching population genetics and quantitative genetics.
 	They might make their way to Hierfstat one day
+Imports:
+    hierfstat,gaston,ade4,adegenet,gaston,gtools,methods
 License: GPL (>=2)
 Encoding: UTF-8
 LazyData: true

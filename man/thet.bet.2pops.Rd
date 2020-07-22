@@ -29,7 +29,7 @@ a list with elements
 }
 }
 \description{
-Quantifies expected coancestries and betas (coancestries relative to
+Quantifies expected coancestries and \eqn{\beta}s (coancestries relative to
 coancestries between population, see
 \href{http://www.genetics.org/content/206/4/2085}{Weir and Goudet
 (2017) Genetics}) in a two populations model.
@@ -52,6 +52,6 @@ coancestries between population, see
 }
 \references{
 \href{http://www.genetics.org/content/206/4/2085}{Weir and Goudet
-(2017) Genetics 206:2085}) A Unified Characterization
+(2017) Genetics 206:2085}. A Unified Characterization
 of Population Structure and Relatedness.
 }

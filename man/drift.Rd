@@ -11,7 +11,7 @@ drift (nind=100, ngen=100, p0=0.5, nrep=1000, PlotIt=FALSE)
 
 \item{ngen}{number of generations}
 
-\item{p0}{initial allel frequency}
+\item{p0}{initial allele frequency}
 
 \item{nrep}{number of replicates}
 
@@ -21,10 +21,13 @@ drift (nind=100, ngen=100, p0=0.5, nrep=1000, PlotIt=FALSE)
 a matrix with the frequencies of replicates in column for each generation in rows
 }
 \description{
-Simulates drift
+Simulates changes in allelic frequencies over time for many replicates,
+and may plot the results
 }
 \examples{
 \dontrun{
+
+#replicates <buri experiment in silico
 res<-drift(ngen=500)
 par(mfrow=c(3,3))
 for (i in c(1,2,5,10,20,50,100,200,500))
