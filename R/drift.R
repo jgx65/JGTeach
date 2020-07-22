@@ -1,12 +1,13 @@
 #' Simulates drift
 #'
-#' Simulates drift
+#' Simulates changes in allelic frequencies over time for many replicates,
+#' and may plot the results
 #'
 #' @usage drift (nind=100, ngen=100, p0=0.5, nrep=1000, PlotIt=FALSE)
 #'
 #' @param nind number of individuals
 #' @param ngen number of generations
-#' @param p0 initial allel frequency
+#' @param p0 initial allele frequency
 #' @param nrep number of replicates
 #' @param PlotIt whether to plot the allelic trajectories
 #'
@@ -14,6 +15,8 @@
 #'
 #' @examples
 #' \dontrun{
+#'
+#' #replicates <buri experiment in silico
 #' res<-drift(ngen=500)
 #' par(mfrow=c(3,3))
 #' for (i in c(1,2,5,10,20,50,100,200,500))
@@ -43,3 +46,6 @@ drift<-function(nind=100, ngen=100, p0=0.5, nrep=1000, PlotIt=FALSE){
   }
   return(freq)
 }
+
+
+##############################################
