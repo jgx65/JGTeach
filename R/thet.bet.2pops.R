@@ -1,6 +1,6 @@
 #' Expected coancestries and betas from a two population model
 #'
-#' Quantifies expected coancestries and betas (coancestries relative to
+#' Quantifies expected coancestries and \eqn{\beta}s (coancestries relative to
 #' coancestries between population, see
 #' \href{http://www.genetics.org/content/206/4/2085}{Weir and Goudet
 #' (2017) Genetics}) in a two populations model.
@@ -19,18 +19,20 @@
 #'
 #' @return a list with elements
 #' \itemize{
-#' \item Th a matrix of coancestries \eqn{theta} for pop1, pop2 and pop1-2 (columns) and generations (rows)
-#' \item Be a matrix of \eqn{beta}s for pop1, pop2 and average (columns) and generations (rows)
+#' \item Th a matrix of coancestries \eqn{\theta} for pop1, pop2 and pop1-2 (columns) and generations (rows)
+#' \item Be a matrix of \eqn{\beta}s for pop1, pop2 and average (columns) and generations (rows)
 #' }
 #'
-#'  @reference{
+#' @references
 #'  \href{http://www.genetics.org/content/206/4/2085}{Weir and Goudet
-#' (2017) Genetics 206:2085}) A Unified Characterization
+#' (2017) Genetics 206:2085}. A Unified Characterization
 #' of Population Structure and Relatedness.
-#'  }
 #'
-#'  @examples
+#'
+#' @examples
+#'
 #' \dontrun{
+#'
 #'  # reproduces fig 1 in Weir and Goudet (2017)
 #'  #top row
 #'  thet.bet.2pops(mu=0.0,m2=0.0,m1=0.0,n1=10000,n2=100,ngen=10000)
@@ -38,7 +40,8 @@
 #'  thet.bet.2pops(mu=0.001,m2=0.0,m1=0.0,n1=10000,n2=100,ngen=10000)
 #'  #bottom row
 #'  thet.bet.2pops(mu=0.001,m2=0.0,m1=0.01,n1=10000,n2=100,ngen=10000)
-#'  }
+#'
+#'    }
 #'
 #'
 #' @export
