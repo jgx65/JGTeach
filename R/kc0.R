@@ -16,7 +16,7 @@
 #' \code{\link[gaston]{GRM}} for standard kinship as an average of ratio (default)
 #'
 #' @export
-#'
+
 Kc0<-function(dos,inb=FALSE,matching=FALSE){
   if(!matching){
     tmp<-hiersftat::beta.dosage(dos,inb=inb,Mb=TRUE)
@@ -24,7 +24,7 @@ Kc0<-function(dos,inb=FALSE,matching=FALSE){
     }
   else Mij<-dos
   MT<-mean(Mij)
-  n<-nrow(MT)
+  n<-nrow(Mij)
   CM<-diag(n)-1/n
   CM%*%(1/(1-MT)*(Mij-MT))%*%CM
 }
