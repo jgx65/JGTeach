@@ -1,6 +1,6 @@
 #' Compares Confidence intervals of the binomial distribution
 #'
-#' computes 95% confidence intervals of the probability of
+#' computes 95\% confidence intervals of the probability of
 #' success using the normal approximation, bootstrapping
 #' and an exact confidence interval
 #'
