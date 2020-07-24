@@ -1,9 +1,9 @@
 #' Estimates the standard kinship matrix
 #'
-#' Estimates the standard kinship matrix as
+#' Estimates the standard kinship Kc0 matrix as
 #' an average of ratios
 #'
-#' @usage kC0(dos,inb=FALSE,matching=FALSE)
+#' @usage KC0(dos,inb=FALSE,matching=FALSE)
 #' @param dos either a dosage matrix or a matching matrix
 #' @param inb whether to report inbreeding coefficient
 #'  or self coancestries on the main diagonal
@@ -19,7 +19,7 @@
 
 Kc0<-function(dos,inb=FALSE,matching=FALSE){
   if(!matching){
-    tmp<-hiersftat::beta.dosage(dos,inb=inb,Mb=TRUE)
+    tmp<-hierfstat::beta.dosage(dos,inb=inb,Mb=TRUE)
     Mij<-with(tmp,betas*(1-MB)+MB)
     }
   else Mij<-dos

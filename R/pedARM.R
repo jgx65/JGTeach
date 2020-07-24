@@ -1,4 +1,4 @@
-#' calculates the additive relationship matrix from a pedigree
+#' calculates the Additive Relationship Matrix (ARM) from a pedigree
 #'
 #' given a vector of sires and dams from a pedigree, calculates
 #' the Additive relationship matrix
@@ -7,10 +7,10 @@
 #'
 #' @param s a vector with sire identies
 #' @param d a vector wit dam identities
-#' @param fcoan  a matrix of coancestries for the founders, if available
+#' @param fcoan  a matrix of relatedness for the founders, if available
 #'
 #' @return a matrix with the expected relatedness
-#' among all airs of individuals and twice self coancestry
+#' among all pairs of individuals and twice self coancestry
 #' on the diagonal
 #'
 #' @export

@@ -1,7 +1,7 @@
 Package: JGTeach
 Type: Package
 Title: JG Teaching material
-Version: 0.1.4
+Version: 0.1.5
 Date: 2020-07-23
 Author: Jerome Goudet [aut, cre]
 Maintainer: Jerome Goudet <jerome.goudet@unil.ch>
