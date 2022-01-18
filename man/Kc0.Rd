@@ -4,7 +4,7 @@
 \alias{Kc0}
 \title{Estimates the standard kinship matrix}
 \usage{
-kC0(dos,inb=FALSE,matching=FALSE)
+KC0(dos,inb=FALSE,matching=FALSE)
 }
 \arguments{
 \item{dos}{either a dosage matrix or a matching matrix}
@@ -13,16 +13,15 @@ kC0(dos,inb=FALSE,matching=FALSE)
 or self coancestries on the main diagonal}
 
 \item{matching}{TRUE if dos is a matching matrix (nixni),
-FALSE if it is a dosage (nixnl) matrix}
+FALSE (default) if it is a dosage (nixnl) matrix}
 }
 \value{
 the standard, ratio of averages, kinship matrix
 }
 \description{
-Estimates the standard kinship matrix as
-an average of ratios
+Estimates the standard kinship Kc0 matrix as
+a ratio of averages
 }
 \seealso{
-\code{\link[hierfstat]{beta.dosage}} for allele sharing kinships;
-\code{\link[gaston]{GRM}} for standard kinship as an average of ratio (default)
+
 }
