@@ -2,7 +2,7 @@
 % Please edit documentation in R/dropAlongPed.R
 \name{kinship.gold}
 \alias{kinship.gold}
-\title{Estimates gold kinship}
+\title{Estimates realized (gold) kinship}
 \usage{
 kinship.gold(dat)
 }
@@ -11,14 +11,17 @@ kinship.gold(dat)
 which alleles each individual has inherited from the founders}
 }
 \value{
-'gold' kinship matrix, including self kinship on the diagonal
+'gold' kinship matrix,  including self kinship on the diagonal
 }
 \description{
-Estimates gold kinship from the genotypes generated with \code{\link{drop.along.ped}}
+Estimates realized kinship from the genotypes generated with \code{\link{drop.along.ped}}
 assuming the founders are unrelated
 }
 \details{
-
+'gold' kinship is the realized proportion of shared alleles between individuals,
+using the founders as reference (each founder is assigned two unique alleles at each position).
+the realized inbreeding coefficient of an individual \eqn{F_i} is obtained from its self-kinship \eqn{k_{ii}} as
+\eqn{F_i=2 k_{ii}-1}
 }
 \examples{
 \dontrun{}

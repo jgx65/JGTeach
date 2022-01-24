@@ -64,15 +64,17 @@ drop.along.ped<-function(ped=ped,founders.genotypes=NULL,nloc=10000,maplength=20
 
   genos<-array(dim=c((nfounders+noffs),nloc,2))
 
-  if(!is.null(founders.genotypes)){
-  if (dim(founders.genotypes)[1]<nfounders*2) stop("not enough fouders gametes (at least 2 x nfounders). Exiting")
-    genos[1:nfounders,,1]<-1:nfounders
-  genos[1:nfounders,,2]<-(1:nfounders)+nfounders
+  if(is.null(founders.genotypes)){
+    genos[1:nfounders,,1]<-founders.genotypes[1:nfounders,]
+    genos[1:nfounders,,2]<-founders.genotypes[nfounders+1:nfounders,]
   }
   else {
-  genos[1:nfounders,,1]<-founders.genotypes[1:nfounders,]
-  genos[1:nfounders,,2]<-founders.genotypes[nfounders+1:nfounders,]
+   if(dim(founders.genotypes)[1]<nfounders*2)
+     stop("not enough founders gametes (at least 2 x n founders). Exiting")
+     genos[1:nfounders,,1]<-1:nfounders
+     genos[1:nfounders,,2]<-(1:nfounders)+nfounders
   }
+
   seqoffs<-(nfounders+1):(nfounders+noffs)
   dam<-match(ped[,2],ped[,1])
   sire<-match(ped[,3],ped[,1])
@@ -188,12 +190,15 @@ kin.goldm<-cmpfun(kinship.goldm)
 #'
 #'
 #'
-#' @return a list of 9 matrices, the lower half of which contains the corresponding Jaccard's coefficients
+#' @return a list of 9 matrices, the lower half of which contain
+#' the corresponding 9 condensed Jaccard's coefficients
 #'
-#' @details given two individuals X with alleles a and b and Y with alleles c and d,
+#' @details given two individuals, X with alleles a and b,
+#' and Y with alleles c and d,
+#'
 #' delta1-> a==b==c==d
 #' delta2-> a==b, c==d, a!=c
-#' delta3-> a=b==c, a!=d
+#' delta3-> a==b==c, a!=d
 #' delta4-> a==b, a=!c, a!=d, c!=d
 #' delta5-> a==c==d, a!=b
 #' delta6-> c==d, c!=a, c!=b, a!=b
@@ -201,13 +206,20 @@ kin.goldm<-cmpfun(kinship.goldm)
 #' delta8-> a==c, a!=b,d, b!=d
 #' delta9-> a!=b, a!=c, a!=d, b!=c, b!=d, c!=d
 #'
-#' The sum of all 9 coefficients is 1
+#' The sum of all 9 coefficients for any pair of individuals is 1
 #'
 #' kinship=delta1+(delta3+delta5+delta7)/2+delta8/4
 #'
 #' k0=delta2+delta4+delta6+delta9
 #' k1=delta1+delta7
 #' k2=delta3+delta5+delta8
+#'
+#' ks (kappas) usually defined for non inbred individuals
+#' in which case
+#'
+#' k0=delta9
+#' k1=delta8
+#' k2=delta7
 #'
 #' @author Jerome Goudet \email{jerome.goudet@@unil.ch}
 #' @references
