@@ -64,7 +64,7 @@ drop.along.ped<-function(ped=ped,founders.genotypes=NULL,nloc=10000,maplength=20
 
   genos<-array(dim=c((nfounders+noffs),nloc,2))
 
-  if(is.null(founders.genotypes)){
+  if(!is.null(founders.genotypes)){
   if (dim(founders.genotypes)[1]<nfounders*2) stop("not enough fouders gametes (at least 2 x nfounders). Exiting")
     genos[1:nfounders,,1]<-1:nfounders
   genos[1:nfounders,,2]<-(1:nfounders)+nfounders
@@ -92,9 +92,9 @@ drop.along.ped<-function(ped=ped,founders.genotypes=NULL,nloc=10000,maplength=20
 }
 ######################################
 ###########################################################################
-#' @title Estimates gold kinship
+#' @title Estimates realized (gold) kinship
 #'
-#' @description Estimates gold kinship from the genotypes generated with \code{\link{drop.along.ped}}
+#' @description Estimates realized kinship from the genotypes generated with \code{\link{drop.along.ped}}
 #' assuming the founders are unrelated
 #'
 #' @usage kinship.gold(dat)
@@ -102,9 +102,12 @@ drop.along.ped<-function(ped=ped,founders.genotypes=NULL,nloc=10000,maplength=20
 #' @param dat an array (niXnlX2) produced by \code{\link{drop.along.ped}} containing
 #' which alleles each individual has inherited from the founders
 #'
-#' @return 'gold' kinship matrix, including self kinship on the diagonal
+#' @return 'gold' kinship matrix,  including self kinship on the diagonal
 #'
-#' @details
+#' @details 'gold' kinship is the realized proportion of shared alleles between individuals,
+#' using the founders as reference (each founder is assigned two unique alleles at each position).
+#' the realized inbreeding coefficient of an individual \eqn{F_i} is obtained from its self-kinship \eqn{k_{ii}} as
+#' \eqn{F_i=2 k_{ii}-1}
 #'
 #' @author Jerome Goudet \email{jerome.goudet@@unil.ch}
 #' @references
@@ -167,3 +170,80 @@ kinship.goldm<-function(dat,ncores=1){
 }
 library(compiler)
 kin.goldm<-cmpfun(kinship.goldm)
+
+
+############################################################
+###########################################################################
+#' @title Calculates the 9 Jaccard's Delta coefficients
+#'
+#' @description Calculates the 9 Jaccard's Delta coefficients from an array of genotypes
+#' generated with \code{\link{drop.along.ped}}
+#'
+#'
+#'
+#'
+#' @usage jaccard(dat)
+#'
+#' @param dat an nixnlx2 array of genotypes ( ni individuals, nl loci) generated with \code{\link{drop.along.ped}}
+#'
+#'
+#'
+#' @return a list of 9 matrices, the lower half of which contains the corresponding Jaccard's coefficients
+#'
+#' @details given two individuals X with alleles a and b and Y with alleles c and d,
+#' delta1-> a==b==c==d
+#' delta2-> a==b, c==d, a!=c
+#' delta3-> a=b==c, a!=d
+#' delta4-> a==b, a=!c, a!=d, c!=d
+#' delta5-> a==c==d, a!=b
+#' delta6-> c==d, c!=a, c!=b, a!=b
+#' delta7-> a==c, b==d, a!=b
+#' delta8-> a==c, a!=b,d, b!=d
+#' delta9-> a!=b, a!=c, a!=d, b!=c, b!=d, c!=d
+#'
+#' The sum of all 9 coefficients is 1
+#'
+#' kinship=delta1+(delta3+delta5+delta7)/2+delta8/4
+#'
+#' k0=delta2+delta4+delta6+delta9
+#' k1=delta1+delta7
+#' k2=delta3+delta5+delta8
+#'
+#' @author Jerome Goudet \email{jerome.goudet@@unil.ch}
+#' @references
+#'
+#' @examples
+#' \dontrun{}
+#' @export
+
+jaccard<-function(dat){
+  #Jaccard's Deltas from gene dropping on the pedigree
+  n<-dim(dat)[1]
+  nl<-dim(dat)[2]
+  ds<-list(length=9);
+  for (k in 1:9) ds[[k]]<-matrix(numeric(n^2),ncol=n)
+  for (i in 2:n){
+    a1<-dat[i,,1] #a
+    a2<-dat[i,,2] #b
+    for (j in 1:(i-1)){
+      a3<-dat[j,,1] #c
+      a4<-dat[j,,2] #d
+      ds[[1]][i,j]<-sum((a1==a2) & (a3==a4) & (a1==a3))/nl
+      ds[[2]][i,j]<-sum((a1==a2) & (a3==a4) & (a1!=a3))/nl
+      ds[[3]][i,j]<-(sum((a1==a2) & (a1==a3) & (a3!=a4))+
+                       sum((a1==a2) & (a1==a4) & (a3!=a4)))/nl#/2
+      ds[[4]][i,j]<-sum((a1==a2) & (a1!=a3) & (a3!=a4) & (a1!=a4))/nl
+      ds[[5]][i,j]<-(sum((a3==a4) & (a3==a1) & (a1!=a2))+
+                       sum((a3==a4) & (a3==a2) & (a1!=a2)))/nl#/2
+      ds[[6]][i,j]<-sum((a3==a4) & (a3!=a1) & (a3!=a2) & (a1!=a2))/nl
+      ds[[7]][i,j]<-(sum((a1==a3) & (a2==a4) & (a1!=a4) & (a2!=a3))+
+                       sum((a1==a4) & (a2==a3) & (a1!=a3) & (a2!=a4)))/nl#/2
+      ds[[8]][i,j]<-(sum((a1==a3) & (a1!=a2) & (a3!=a4) & (a2!=a4))+
+                       sum((a1==a4) & (a1!=a2) & (a3!=a4) & (a2!=a3))+
+                       sum((a2==a3) & (a1!=a2) & (a3!=a4) & (a1!=a4))+
+                       sum((a2==a4) & (a1!=a2) & (a3!=a4) & (a1!=a3)))/nl#/4
+      ds[[9]][i,j]<-sum((a1!=a2) & (a3!=a4) & (a1!=a3) & (a1!=a4) & (a2!=a3) & (a2!=a4))/nl
+    }}
+  ds
+}
+############################################################
