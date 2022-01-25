@@ -65,14 +65,16 @@ drop.along.ped<-function(ped=ped,founders.genotypes=NULL,nloc=10000,maplength=20
   genos<-array(dim=c((nfounders+noffs),nloc,2))
 
   if(is.null(founders.genotypes)){
-    genos[1:nfounders,,1]<-founders.genotypes[1:nfounders,]
-    genos[1:nfounders,,2]<-founders.genotypes[nfounders+1:nfounders,]
+     genos[1:nfounders,,1]<-1:nfounders
+     genos[1:nfounders,,2]<-(1:nfounders)+nfounders
   }
   else {
    if(dim(founders.genotypes)[1]<nfounders*2)
      stop("not enough founders gametes (at least 2 x n founders). Exiting")
-     genos[1:nfounders,,1]<-1:nfounders
-     genos[1:nfounders,,2]<-(1:nfounders)+nfounders
+   else{
+    genos[1:nfounders,,1]<-founders.genotypes[1:nfounders,]
+    genos[1:nfounders,,2]<-founders.genotypes[nfounders+1:nfounders,]
+    }
   }
 
   seqoffs<-(nfounders+1):(nfounders+noffs)
@@ -208,13 +210,10 @@ kin.goldm<-cmpfun(kinship.goldm)
 #'
 #' The sum of all 9 coefficients for any pair of individuals is 1
 #'
-#' kinship=delta1+(delta3+delta5+delta7)/2+delta8/4
+#' coancestry=delta1+(delta3+delta5+delta7)/2+delta8/4
 #'
-#' k0=delta2+delta4+delta6+delta9
-#' k1=delta1+delta7
-#' k2=delta3+delta5+delta8
 #'
-#' ks (kappas) usually defined for non inbred individuals
+#' ks (kappas) defined for non inbred individuals only
 #' in which case
 #'
 #' k0=delta9

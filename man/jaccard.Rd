@@ -33,13 +33,10 @@ delta9-> a!=b, a!=c, a!=d, b!=c, b!=d, c!=d
 
 The sum of all 9 coefficients for any pair of individuals is 1
 
-kinship=delta1+(delta3+delta5+delta7)/2+delta8/4
+coancestry=delta1+(delta3+delta5+delta7)/2+delta8/4
 
-k0=delta2+delta4+delta6+delta9
-k1=delta1+delta7
-k2=delta3+delta5+delta8
 
-ks (kappas) usually defined for non inbred individuals
+ks (kappas) defined for non inbred individuals only
 in which case
 
 k0=delta9

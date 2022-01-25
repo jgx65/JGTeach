@@ -23,5 +23,7 @@ Estimates the standard kinship Kc0 matrix as
 a ratio of averages
 }
 \seealso{
-
+\code{\link[hierfstat]{matching}} for allele sharing,
+\code{\link[hierfstat]{beta.dosage}} for allele sharing kinships;
+\code{\link[gaston]{GRM}} for standard kinship as an average of ratio (default)
 }
