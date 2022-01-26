@@ -197,29 +197,31 @@ kin.goldm<-cmpfun(kinship.goldm)
 #'
 #' @details given two individuals, X with alleles a and b,
 #' and Y with alleles c and d,
-#'
-#' delta1-> a==b==c==d
-#' delta2-> a==b, c==d, a!=c
-#' delta3-> a==b==c, a!=d
-#' delta4-> a==b, a=!c, a!=d, c!=d
-#' delta5-> a==c==d, a!=b
-#' delta6-> c==d, c!=a, c!=b, a!=b
-#' delta7-> a==c, b==d, a!=b
-#' delta8-> a==c, a!=b,d, b!=d
-#' delta9-> a!=b, a!=c, a!=d, b!=c, b!=d, c!=d
-#'
+#' \itemize{
+#' \item{\eqn{\Delta_1}}{ a==b==c==d}
+#' \item{\eqn{\Delta_2}}{ a==b, c==d, a!=c}
+#' \item{\eqn{\Delta_3}}{ a==b==c, a!=d}
+#' \item{\eqn{\Delta_4}}{ a==b, a=!c, a!=d, c!=d}
+#' \item{\eqn{\Delta_5}}{ a==c==d, a!=b}
+#' \item{\eqn{\Delta_6}}{ c==d, c!=a, c!=b, a!=b}
+#' \item{\eqn{\Delta_7}}{ a==c, b==d, a!=b}
+#' \item{\eqn{\Delta_8}}{ a==c, a!=b,d, b!=d}
+#' \item{\eqn{\Delta_9}}{ a!=b, a!=c, a!=d, b!=c, b!=d, c!=d}
+#' }
 #' The sum of all 9 coefficients for any pair of individuals is 1
 #'
-#' coancestry=delta1+(delta3+delta5+delta7)/2+delta8/4
+#' Coancestry \eqn{\theta} is
+#' \deqn{\theta=\Delta_1+(\Delta_3+\Delta_5+\Delta_7)/2
+#' +\Delta_8/4}
 #'
 #'
 #' ks (kappas) defined for non inbred individuals only
 #' in which case
-#'
-#' k0=delta9
-#' k1=delta8
-#' k2=delta7
-#'
+#'\itemize{
+#' \item{\eqn{k_0}}{ \eqn{\Delta_9}}
+#' \item{\eqn{k_1}}{ \eqn{\Delta_8}}
+#' \item{\eqn{k_2}}{ \eqn{\Delta_7}}
+#'}
 #' @author Jerome Goudet \email{jerome.goudet@@unil.ch}
 #' @references
 #'
