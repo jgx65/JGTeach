@@ -17,7 +17,7 @@ a list with components
 }
 }
 \description{
-Estimates FUNI as average of Ratios on a \code{\link[gaston]{bed.matrix}} object
+Estimates FUNI as average of ratios on a \code{\link[gaston]{bed.matrix}} object
 }
 \details{
 

@@ -12,7 +12,7 @@ get.funiw(dos)
 \value{
 a list with components
 \itemize{
-\item het the sum of loci heterozygosities
+\item het the sum of loci expected heterozygosities
 \item Funi ratio of averages \eqn{F_{uni}} estimates
 }
 }
