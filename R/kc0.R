@@ -20,7 +20,7 @@
 
 Kc0<-function(dos,inb=FALSE,matching=FALSE){
   if(!matching){
-    tmp<-hierfstat::matching(dos)
+    Mij<-hierfstat::matching(dos)
     }
   else Mij<-dos
   MT<-mean(Mij)
