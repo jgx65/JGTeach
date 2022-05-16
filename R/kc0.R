@@ -3,10 +3,8 @@
 #' Estimates the standard kinship Kc0 matrix as
 #' a ratio of averages
 #'
-#' @usage KC0(dos,inb=FALSE,matching=FALSE)
+#' @usage KC0(dos,matching=FALSE)
 #' @param dos either a dosage matrix or a matching matrix
-#' @param inb whether to report inbreeding coefficient
-#'  or self coancestries on the main diagonal
 #' @param matching TRUE if dos is a matching matrix (nixni),
 #'  FALSE (default) if it is a dosage (nixnl) matrix
 #'
@@ -20,7 +18,7 @@
 
 Kc0<-function(dos,inb=FALSE,matching=FALSE){
   if(!matching){
-    tmp<-hierfstat::matching(dos)
+    Mij<-hierfstat::matching(dos)
     }
   else Mij<-dos
   MT<-mean(Mij)
