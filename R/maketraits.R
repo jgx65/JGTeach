@@ -1,10 +1,10 @@
 #' Creates a phenotype from randomly chosen SNPs
 #'
+#' @description
 #'
-#' If sel is !=0, effect size will be scaled by
-#' pop is var of the population effect, relative to VP.
-#' if popid is NULL, pop taken from bed@ped$famid
-
+#' Generates a phenotype from a random subset of SNPs with the required heritability.
+#' possibly including
+#' a (random) population specific effect.
 #'
 #' @usage make.traits(bed,n.causal=1000,h2=0.5,minp=0.01,sel=0.0,pop=NULL,popid=NULL)
 #'
@@ -22,7 +22,7 @@
 #' \item h2 he intended heritability
 #' \item h2hat the realized heritability
 #' \item trait a data frame of two columns,
-#' BV being the individual breeding values and
+#' gval being the individual genetic values and
 #' pheno their phenotypes
 #' \item causal a data frame with three columns,
 #' chr the chromosome where the causal loci are located,
@@ -30,7 +30,12 @@
 #'
 #' }
 #'
+#' @details
 #'
+#' If sel is !=0, effect size will be scaled by  \eqn{1/(2*p*(1-p))^(sel/2)}, where p is the
+#' sample frequency of the derived allele.
+#' pop is the variance of the population effect, relative to VP.
+#' if popid is NULL, popid taken from bed@ped$famid
 #' @export
 make.traits<-function(bed=bed,n.causal=1000,h2=0.5,minp=0.01,sel=0.0,pop=NULL,popid=NULL){
 
@@ -39,7 +44,7 @@ make.traits<-function(bed=bed,n.causal=1000,h2=0.5,minp=0.01,sel=0.0,pop=NULL,po
   if (sel!=0.0){
     caus.p<-bed@p[causal]
     w.f.eff.siz<-(2*caus.p*(1-caus.p))^(sel/2)
-    ef.size<-ef.size*w.f.eff.siz #effect size inversely prop to st.dev of allele freq
+    ef.size<-ef.size*w.f.eff.siz
   }
   gval<-as.numeric(gaston::as.matrix(bed[,causal])%*%ef.size)
   va<-var(gval)
@@ -49,12 +54,15 @@ make.traits<-function(bed=bed,n.causal=1000,h2=0.5,minp=0.01,sel=0.0,pop=NULL,po
     popid<-factor(popid)
     npop<-nlevels(popid)
     pop.efsize<-stats::rnorm(npop,sd=sd(phenog)*pop^0.5)
-    phenog<-phenog+pop.efsize[popid]
+    for (i in 1:npop){
+      x<-levels(popid)[1]
+      phenog[popid==x]<-phenog[popid==x]+pop.efsize[i]
+    }
   }
   phenog<-phenog-mean(phenog)
   h2hat<-va/var(phenog) #h2
   return(list(h2=h2,h2hat=h2hat,
-              trait=data.frame(BV=gval-mean(gval),pheno=phenog),
+              trait=data.frame(gval=gval-mean(gval),pheno=phenog),
               causal=data.frame(chr=bed@snps$chr[causal],id=bed@snps$id[causal],efs=ef.size)))
 }
 ######################################
