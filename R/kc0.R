@@ -3,7 +3,7 @@
 #' Estimates the standard kinship Kc0 matrix as
 #' a ratio of averages
 #'
-#' @usage KC0(dos,matching=FALSE)
+#' @usage Kc0(dos,matching=FALSE)
 #' @param dos either a dosage matrix or a matching matrix
 #' @param matching TRUE if dos is a matching matrix (nixni),
 #'  FALSE (default) if it is a dosage (nixnl) matrix
@@ -16,7 +16,7 @@
 #'
 #' @export
 
-Kc0<-function(dos,inb=FALSE,matching=FALSE){
+Kc0<-function(dos,matching=FALSE){
   if(!matching){
     Mij<-hierfstat::matching(dos)
     }

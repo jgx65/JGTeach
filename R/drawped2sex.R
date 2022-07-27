@@ -3,7 +3,7 @@
 #'
 #' @description Builds a two-sex pedigree from the passed arguments
 #'
-#' @usage buildped.2sex(founders.m=50,founders.f=50,fert=2.0,death.rate=0.2,breed.prop=0.5,male.prop=0.5,n.tstep=10)
+#' @usage buildped.2sexes(founders.m=50,founders.f=50,fert=2.0,death.rate=0.2,breed.prop=0.5,male.prop=0.5,n.tstep=10)
 #'
 #' @param founders.m numbers of male founders
 #' @param founders.f number of female founders

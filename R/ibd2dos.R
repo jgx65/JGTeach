@@ -14,7 +14,7 @@
 #' @param b1 the 1st parameter of the \code{\link{beta}} distribution
 #' @param b2 the second parameter of the \code{\link{beta}} distribution
 #'
-#' @value a dosage matrix with ni rows and nl columns
+#' @return a dosage matrix with ni rows and nl columns
 #'
 #' @author Jerome Goudet \email{jerome.goudet@@unil.ch}
 #'
@@ -23,15 +23,6 @@
 #' ped1<-buildped.2sexes(founders.m=10,founders.f=10,fert=1,death.rate=0.5,breed.prop=0.2,n.tstep=5)
 #' ibd.ped1<-drop.along.ped(ped1,nloc=5000,maplength=20)
 #' dos.ped1<-ibd2dos(ibd.ped1,n.founders=20)
-#' kAS.ped1<-hierfstat::beta.dosage(dos.ped1)
-#' kc0.ped1<-Kc0(dos.ped1)
-#' kgold.ped1<-kinship.gold(ibd.ped1)
-#' ARM.ped1<-pedARM(ped1[,2],ped1[,3])
-#'
-#' round(cor(cbind(hierfstat::mat2vec(ARM.ped1)/2,
-#' hierfstat::mat2vec(kgold.ped1),
-#' hierfstat::mat2vec(kAS.ped1),
-#' hierfstat::mat2vec(kc0.ped1))),digits=3)
 #' }
 #'
 #' @export

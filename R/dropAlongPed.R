@@ -31,7 +31,7 @@
 #' \dontrun{}
 #' @export
 
-drop.along.ped<-function(ped=ped,founders.genotypes=NULL,nloc=10000,maplength=20,ndigits=2){
+drop.along.ped<-function(ped=ped,founders.genotypes=NULL,nloc=10000,maplength=20){
   #assumes a pedigree (3 columns, ind, dam,sire)
   #if gene dropping, no founder genotypes needed.
   #else a data frame dat with founders genotypes

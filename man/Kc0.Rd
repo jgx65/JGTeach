@@ -4,13 +4,10 @@
 \alias{Kc0}
 \title{Estimates the standard kinship matrix}
 \usage{
-KC0(dos,inb=FALSE,matching=FALSE)
+Kc0(dos,matching=FALSE)
 }
 \arguments{
 \item{dos}{either a dosage matrix or a matching matrix}
-
-\item{inb}{whether to report inbreeding coefficient
-or self coancestries on the main diagonal}
 
 \item{matching}{TRUE if dos is a matching matrix (nixni),
 FALSE (default) if it is a dosage (nixnl) matrix}

@@ -26,7 +26,9 @@
 #'
 #'
 #'
-#' @examples{\dontrun{}}
+#' @examples
+#'
+#' \dontrun{}
 #'
 #' @export
 

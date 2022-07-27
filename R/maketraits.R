@@ -47,6 +47,8 @@
 #' pop is the variance of the population effect, relative to VP.
 #' if popid is NULL, popid taken from bed@ped$famid
 #' @export
+
+########################3
 make.traits<-function(bed=bed,n.causal=1000,h2=0.5,minp=0.01,sel=0.0,pop=NULL,popid=NULL){
 
     causal<-sample(which(bed@snps$maf>minp),size=n.causal)
