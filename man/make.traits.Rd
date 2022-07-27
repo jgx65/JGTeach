@@ -28,16 +28,32 @@ A list with components
 \item h2 he intended heritability
 \item h2hat the realized heritability
 \item trait a data frame of two columns,
-BV being the individual breeding values and
+gval being the individual genetic values and
 pheno their phenotypes
 \item causal a data frame with three columns,
-chr the chromosome where the causal loci are located,
-id the SNP id and efs their effect size
+chr the chromosome where the causal loci are located;
+id the SNP id; and efs their effect size
 
 }
 }
 \description{
-If sel is !=0, effect size will be scaled by
-pop is var of the population effect, relative to VP.
-if popid is NULL, pop taken from bed@ped$famid
+Generates a phenotype from a random subset of SNPs with the required heritability.
+possibly including
+a (random) population specific effect.
+}
+\details{
+Traits are built using additive effects only. Genetic
+values are the sum of the products of dosages at causal loci by their effect sizes.
+
+Additive variance VA is measured as the variance of genetic values. A normal
+deviate with variance \eqn{VA * (1/h^2-1)}, where  \eqn{h^2} is the intended trait
+heritability, is  added to the genetic values to make the phenotypes. If pop!=NULL,
+a random deviate with variance proportional to the phenotypic variance VP (i.e.
+\eqn{Vpop=pop*VP}) is added to the individual phenotypes in each population.
+
+
+If sel is !=0, effect size will be scaled by  \eqn{1/(2*p*(1-p))^(sel/2)}, where p is the
+sample frequency of the derived allele.
+pop is the variance of the population effect, relative to VP.
+if popid is NULL, popid taken from bed@ped$famid
 }

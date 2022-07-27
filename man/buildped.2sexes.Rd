@@ -4,7 +4,7 @@
 \alias{buildped.2sexes}
 \title{Builds a two-sex pedigree}
 \usage{
-buildped.2sex(founders.m=50,founders.f=50,fert=2.0,death.rate=0.2,breed.prop=0.5,male.prop=0.5,n.tstep=10)
+buildped.2sexes(founders.m=50,founders.f=50,fert=2.0,death.rate=0.2,breed.prop=0.5,male.prop=0.5,n.tstep=10)
 }
 \arguments{
 \item{founders.m}{numbers of male founders}

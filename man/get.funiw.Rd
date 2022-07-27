@@ -25,7 +25,8 @@ Estimates FUNI as ratio of averages on a \code{\link[gaston]{bed.matrix}} object
 
 }
 \examples{
-{\dontrun{}}
+
+\dontrun{}
 
 }
 \references{
