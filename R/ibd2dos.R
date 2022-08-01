@@ -12,13 +12,13 @@
 #'
 #' @param gametes a nixnlx2 array of gametes created by \code{\link{drop.along.ped}}
 #' @param n.founders the number of founders in the pedigree
-#' @param g.founders a (2*ni)xnl array with the bi-allelic gametes of the founders (default to NULL)
+#' @param g.founders a (2*nfounders)xnl array with the bi-allelic gametes of the founders (default to NULL)
 #' @param b1 the 1st parameter of the \code{\link{beta}} distribution
 #' @param b2 the 2nd parameter of the \code{\link{beta}} distribution
 #'
 #' @return a dosage matrix with ni rows and nl columns
 #'
-#' @details The gametes of  the founders can be entered as an (2*ni) x nl array. This insures
+#' @details The gametes of  the founders can be entered as an (2*nfounders) x nl array. This insures
 #' any haplotype structure in the founders can be kept.  If g.founders is NULL, allelic frequencies
 #' in the founders are drawn from a beta distribution with parameters b1 (default=1)
 #' and b2 (default=10).
