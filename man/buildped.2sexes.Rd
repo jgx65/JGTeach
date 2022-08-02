@@ -27,9 +27,6 @@ a pedigree data frame with 4 columns [ind id, dam id, sire id, sex] and as many 
 \description{
 Builds a two-sex pedigree from the passed arguments
 }
-\details{
-
-}
 \examples{
 \dontrun{
 
@@ -44,9 +41,6 @@ range(diag(grm2kinship(pedARM(test[,2],test[,3]))))
 library(kinship2)
 with(test,plot(pedigree(ind,sire,dam,sex)))
 }
-}
-\references{
-
 }
 \author{
 Jerome Goudet \email{jerome.goudet@unil.ch}

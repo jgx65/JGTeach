@@ -19,11 +19,6 @@ a list with components
 \description{
 Estimates FUNI as ratio of averages on a \code{\link[gaston]{bed.matrix}} object
 }
-\details{
-
-
-
-}
 \examples{
 
 \dontrun{}

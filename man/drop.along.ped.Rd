@@ -27,14 +27,8 @@ a [ni,nl,2] array of genotypes
 Given a pedigree, drops alleles along the pedigree using the given recombination map.
 Could be seeded with genotypes for the founder individuals, otherwise, uses gene dropping.
 }
-\details{
-
-}
 \examples{
 \dontrun{}
-}
-\references{
-
 }
 \author{
 Jerome Goudet \email{jerome.goudet@unil.ch}

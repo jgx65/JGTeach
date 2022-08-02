@@ -23,9 +23,6 @@ a pedigree data frame with 3 columns [ind id, parent1 id, parent2 id] and as man
 \description{
 Builds a hermaphrodite pedigree from the passed arguments
 }
-\details{
-
-}
 \examples{
 \dontrun{
 
@@ -37,9 +34,6 @@ range(mat2vec(grm2kinship(pedARM(test[,2],test[,3]))))
 #range of inbreeding coefficients
 range(diag(grm2kinship(pedARM(test[,2],test[,3]))))
 }
-}
-\references{
-
 }
 \author{
 Jerome Goudet \email{jerome.goudet@unil.ch}

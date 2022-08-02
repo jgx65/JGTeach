@@ -4,16 +4,18 @@
 \alias{ibd2dos}
 \title{convert Identity By Descent gametes to dosage data}
 \usage{
-ibd2dos(gametes,n.founders,b1=1,b2=10)
+ibd2dos(gametes,n.founders,g.founders=NULL,b1=1,b2=10)
 }
 \arguments{
 \item{gametes}{a nixnlx2 array of gametes created by \code{\link{drop.along.ped}}}
 
 \item{n.founders}{the number of founders in the pedigree}
 
+\item{g.founders}{a (2*nfounders)xnl array with the bi-allelic gametes of the founders (default to NULL)}
+
 \item{b1}{the 1st parameter of the \code{\link{beta}} distribution}
 
-\item{b2}{the second parameter of the \code{\link{beta}} distribution}
+\item{b2}{the 2nd parameter of the \code{\link{beta}} distribution}
 }
 \value{
 a dosage matrix with ni rows and nl columns
@@ -21,10 +23,17 @@ a dosage matrix with ni rows and nl columns
 \description{
 Given gametes, the output of \code{\link{drop.along.ped}} on a pedigree and
 and n.founders, the number of founders in the pedigree,
-return a matrix of dosages after having mapped at random
+return a matrix ni x nl of dosages after having mapped
 the 2n.founders alleles at each locus to 0 or 1.
-The probability of a 1 (the founders frequency of 1) is drawn from a
-\code{\link{beta}} distribution with parameters b1 and b2.
+The gametes of the founders are given in g.founders or
+frequencies at each locus are drawn from a \code{\link{beta}}
+distribution with parameters b1 and b2.
+}
+\details{
+The gametes of  the founders can be entered as a (2*nfounders) x nl matrix. This insures
+any haplotype structure in the founders can be kept.  If g.founders is NULL, allelic frequencies
+in the founders are drawn from a beta distribution with parameters b1 (default=1)
+and b2 (default=10).
 }
 \examples{
 \dontrun{

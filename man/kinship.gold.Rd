@@ -26,9 +26,6 @@ the realized inbreeding coefficient of an individual \eqn{F_i} is obtained from 
 \examples{
 \dontrun{}
 }
-\references{
-
-}
 \author{
 Jerome Goudet \email{jerome.goudet@unil.ch}
 }

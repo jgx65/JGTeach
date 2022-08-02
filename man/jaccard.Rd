@@ -49,9 +49,6 @@ in which case
 \examples{
 \dontrun{}
 }
-\references{
-
-}
 \author{
 Jerome Goudet \email{jerome.goudet@unil.ch}
 }

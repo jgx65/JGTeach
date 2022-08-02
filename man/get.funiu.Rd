@@ -20,8 +20,6 @@ a list with components
 Estimates FUNI as average of ratios on a \code{\link[gaston]{bed.matrix}} object
 }
 \details{
-
-
 This is the original definition of FIII or FUNI given in Yang et al. (2010, 2011)
 }
 \references{
