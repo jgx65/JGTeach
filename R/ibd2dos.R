@@ -18,7 +18,7 @@
 #'
 #' @return a dosage matrix with ni rows and nl columns
 #'
-#' @details The gametes of  the founders can be entered as an (2*nfounders) x nl array. This insures
+#' @details The gametes of  the founders can be entered as a (2*nfounders) x nl matrix. This insures
 #' any haplotype structure in the founders can be kept.  If g.founders is NULL, allelic frequencies
 #' in the founders are drawn from a beta distribution with parameters b1 (default=1)
 #' and b2 (default=10).
@@ -43,8 +43,9 @@ ibd2dos<-function(gametes,n.founders,g.founders=NULL,b1=1,b2=10){
     stop("Error, gametes must be an array nixnlx2 \n as produced by the drop.along.ped function. Exiting")
   if((n.founders <1) | (n.founders >dim(gametes)[1]))
     stop("Error, n.founders must be the number of founders in the pedigree \n used to generate gametes. Exiting")
-  if((!is.null(g.founders)) & (dim(g.founders)[1]!=nf2) & (dim(g.founders)[2]!=nl))
-    stop("Error, dim of g.founders must match be 2n.founders x nl. Exiting")
+  if(!is.null(g.founders))
+     if((dim(g.founders)[1]!=nf2) | (dim(g.founders)[2]!=nl))
+         stop("Error, dim of g.founders must match be 2n.founders x nl. Exiting")
 
   if (is.null(g.founders)) nA<-round(rbeta(nl,b1,b2)*nf2,digits=0)
 
