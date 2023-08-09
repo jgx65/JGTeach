@@ -141,7 +141,6 @@ kinship.gold<-function(dat){
 }
 ##########################################
 kinship.goldm<-function(dat,ncores=1){
-#  if (ncores >1) library(parallel)
 
   psi<-function(i){
     psis<-numeric(n)
@@ -172,8 +171,8 @@ kinship.goldm<-function(dat,ncores=1){
       k[i,j]<-k[j,i]
   k
 }
-library(compiler)
-kin.goldm<-cmpfun(kinship.goldm)
+
+kin.goldm<-compiler::cmpfun(kinship.goldm)
 
 
 ############################################################
@@ -214,6 +213,11 @@ kin.goldm<-cmpfun(kinship.goldm)
 #' \deqn{\theta=\Delta_1+(\Delta_3+\Delta_5+\Delta_7)/2
 #' +\Delta_8/4}
 #'
+#' Inbreeding FX for individual X is:
+#' \deqn{F_X=\Delta_1+\Delta_2+\Delta_3+\Delta_4}
+#'
+#' while inbreeding FY for individual Y is:
+#' \deqn{F_Y=\Delta_1+\Delta_2+\Delta_5+\Delta_6}
 #'
 #' ks (kappas) defined for non inbred individuals only
 #' in which case
@@ -244,17 +248,17 @@ jaccard<-function(dat){
       ds[[1]][i,j]<-sum((a1==a2) & (a3==a4) & (a1==a3))/nl
       ds[[2]][i,j]<-sum((a1==a2) & (a3==a4) & (a1!=a3))/nl
       ds[[3]][i,j]<-(sum((a1==a2) & (a1==a3) & (a3!=a4))+
-                       sum((a1==a2) & (a1==a4) & (a3!=a4)))/nl#/2
+                       sum((a1==a2) & (a1==a4) & (a3!=a4)))/nl
       ds[[4]][i,j]<-sum((a1==a2) & (a1!=a3) & (a3!=a4) & (a1!=a4))/nl
       ds[[5]][i,j]<-(sum((a3==a4) & (a3==a1) & (a1!=a2))+
-                       sum((a3==a4) & (a3==a2) & (a1!=a2)))/nl#/2
+                       sum((a3==a4) & (a3==a2) & (a1!=a2)))/nl
       ds[[6]][i,j]<-sum((a3==a4) & (a3!=a1) & (a3!=a2) & (a1!=a2))/nl
-      ds[[7]][i,j]<-(sum((a1==a3) & (a2==a4) & (a1!=a4) & (a2!=a3))+
-                       sum((a1==a4) & (a2==a3) & (a1!=a3) & (a2!=a4)))/nl#/2
+      ds[[7]][i,j]<-(sum((a1==a3) & (a2==a4) & (a1!=a2))+
+                       sum((a1==a4) & (a2==a3) & (a1!=a2)))/nl
       ds[[8]][i,j]<-(sum((a1==a3) & (a1!=a2) & (a3!=a4) & (a2!=a4))+
                        sum((a1==a4) & (a1!=a2) & (a3!=a4) & (a2!=a3))+
                        sum((a2==a3) & (a1!=a2) & (a3!=a4) & (a1!=a4))+
-                       sum((a2==a4) & (a1!=a2) & (a3!=a4) & (a1!=a3)))/nl#/4
+                       sum((a2==a4) & (a1!=a2) & (a3!=a4) & (a1!=a3)))/nl
       ds[[9]][i,j]<-sum((a1!=a2) & (a3!=a4) & (a1!=a3) & (a1!=a4) & (a2!=a3) & (a2!=a4))/nl
     }}
   ds
