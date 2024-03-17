@@ -24,7 +24,7 @@
 #'
 #' @details
 #'
-#'
+#' 
 #'
 #' @examples
 #'
@@ -37,10 +37,17 @@ get.funiw<-function(dos){
   if(!class(dos)[[1]]=="bed.matrix") stop("Argument must be of class bed.matrix. Exiting")
   p<-dos@p
   het<-2*p*(1-p)
-  num<-apply(as.matrix(dos),1,function(x) sum(x^2-(1+2*p)*x+2*p^2))
-  den<-sum(het)
-  return(list(het=den,Funi=num/den))
+  res<-apply(gaston:::as.matrix(dos),1,function(x) {
+                                    nas<-which(is.na(x)); 
+									xs<-x[-nas];
+									ps<-p[-nas];
+									hets<-het[-nas];
+									sum(xs^2-(1+2*ps)*xs+2*ps^2)/sum(hets)
+									}
+			)
+  return(Funi=unlist(res))
 }
+
 
 #######################
 #' @title Estimates FUNI (FIII) as average of ratios
@@ -90,7 +97,7 @@ get.funiu<-function(dos){
   if(!class(dos)[[1]]=="bed.matrix") stop("Argument must be of class bed.matrix. Exiting")
   p<-dos@p
   pol<-which(dos@snps$maf>0.0)
-  x<-as.matrix(dos[,pol])
+  x<-gaston:::as.matrix(dos[,pol])
   p<-p[pol]
   het<-2*p*(1-p)
   nl<-dim(x)[2]
