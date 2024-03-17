@@ -239,6 +239,10 @@ jaccard<-function(dat){
   nl<-dim(dat)[2]
   ds<-list(length=9);
   for (k in 1:9) ds[[k]]<-matrix(numeric(n^2),ncol=n)
+  a1<-dat[1,,1]
+  a2<-dat[1,,2]
+      ds[[1]][1,1]<-sum(a1==a2)/nl
+      ds[[7]][1,1]<-sum(a1!=a2)/nl	   
   for (i in 2:n){
     a1<-dat[i,,1] #a
     a2<-dat[i,,2] #b
