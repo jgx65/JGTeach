@@ -97,7 +97,7 @@ get.funiu<-function(dos){
   if(!class(dos)[[1]]=="bed.matrix") stop("Argument must be of class bed.matrix. Exiting")
   p<-dos@p
   pol<-which(dos@snps$maf>0.0)
-  x<-gaston:::as.matrix(dos[,pol])
+  x<-gaston::as.matrix(dos[,pol])
   p<-p[pol]
   het<-2*p*(1-p)
   nl<-dim(x)[2]
