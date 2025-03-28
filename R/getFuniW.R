@@ -39,10 +39,13 @@ get.funiw<-function(dos){
   het<-2*p*(1-p)
   res<-apply(gaston:::as.matrix(dos),1,function(x) {
                                     nas<-which(is.na(x)); 
+									if(length(nas)>0){
 									xs<-x[-nas];
 									ps<-p[-nas];
 									hets<-het[-nas];
-									sum(xs^2-(1+2*ps)*xs+2*ps^2)/sum(hets)
+									sum(xs^2-(1+2*ps)*xs+2*ps^2)/sum(hets);
+									}
+									else sum(x^2-(1+2*p)*x+2*p^2)/sum(het);
 									}
 			)
   return(Funi=unlist(res))
