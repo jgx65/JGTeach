@@ -37,6 +37,11 @@ Coancestry \eqn{\theta} is
 \deqn{\theta=\Delta_1+(\Delta_3+\Delta_5+\Delta_7)/2
 +\Delta_8/4}
 
+Inbreeding FX for individual X is:
+\deqn{F_X=\Delta_1+\Delta_2+\Delta_3+\Delta_4}
+
+while inbreeding FY for individual Y is:
+\deqn{F_Y=\Delta_1+\Delta_2+\Delta_5+\Delta_6}
 
 ks (kappas) defined for non inbred individuals only
 in which case

@@ -1,0 +1,17 @@
+#'
+
+ss1d.migmat<-function(m=0.01,np=10,tor=FALSE){
+     mig.mat<-diag(np)*(1-m)
+     diag(mig.mat[-1,-np])<-m/2
+     diag(mig.mat[-np,-1])<-m/2
+	 if(tor) {
+	 mig.mat[1,np]<-m/2
+	 mig.mat[np,1]<-m/2
+	 } else {
+     mig.mat[1,1:2]<-c(1-m/2,m/2)
+     mig.mat[np,(np-1):np]<-c(m/2,1-m/2)
+	 }
+
+
+mig.mat
+}

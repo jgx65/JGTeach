@@ -1,0 +1,471 @@
+testpheno<-function(path,z,gen,nd=5,ns=5,no=2,np=8,pop=NULL,
+nboot=1000,nwarm=2000,niter=6000,neut=FALSE,debug=FALSE){
+#path: where the data is stored
+#z: replicate number,padded with 0 if need be (to do before the call to testpheno)
+#nd: number of dams
+#ns: number of sires
+#no: number of offspring
+#np: number of populations
+#pop: which populations to keep 
+#nboot: number of replicates for resampling loci for FST
+#niter: chain length in brms
+#nwarm: warmup lengt in brms
+
+	dat<-read.fstat(paste0(path,"neutral_data_g",gen,"_r",z,".dat"))
+	datq<-read.fstat(paste0(path,"quanti_trait_g",gen,"_r",z,".dat"))
+	if(!is.null(pop)){
+	x<-which(dat[,1] %in% pop)
+	dat<-dat[x,]
+	datq<-datq[x,]
+	}
+	dos<-biall2dos(dat[,-1])
+	dosq<-biall2dos(datq[,-1])
+	M<-matching(dos)
+	Mq<-matching(dosq)
+
+        a<-c(0,cumsum(table(dat[,1]))[-np])
+#	a<-0:7*1000
+	a<-rep(a,each=(ns+nd))
+
+	#get.rnd.fst<-function(matching,z){
+	#tmp<-sample(1000,size=10)
+	#x<-a+rep(tmp,8)
+	#fst.dosage(matching[x,x],pop=rep(1:8,each=10),matching=TRUE)[9]
+#}
+
+#get.rnd.fst(M,1)
+#get.rnd.fst(Mq,1)
+
+####################
+
+# ns<-5
+#n dams
+# nd<-5
+#n pops
+# np<-8
+#n offs
+# no<-2
+#total number of founders
+nft<-np*(ns+nd)
+PLOT=FALSE
+
+
+#####
+##needs to run drop.along.ped on both neutral and qtl loci
+
+
+#total number of founders
+# nft<-np*(ns+nd)
+
+tmp<-unlist(lapply(table(dat[,1]), function(x) sample(x,size=(ns+nd))))
+#tmp<-sample(1000,size=10)
+x<-a+tmp
+#x<-a+rep(tmp,8)
+
+dosqx<-dosq[x,]
+datqx<-datq[x,]
+dosx<-dos[x,]
+datx<-dat[x,]
+Mx<-M[x,x]
+Mqx<-Mq[x,x]
+
+#first qtls, then neutral markers
+nln<-ncol(datx)
+nlq<-ncol(datqx)
+datallx<-cbind(datqx[,-1],datx[,-1])
+nl<-ncol(datallx)
+
+
+tmp1<-as.matrix(datallx%/%10-1)
+tmp2<-as.matrix(datallx%%10-1)
+founders<-array(0,dim=c(nft,nl,2))
+
+founders[,,1]<-tmp1
+founders[,,2]<-tmp2
+
+
+## -----------------------------------------------------------------
+
+# ns sires, nd dams per pop, all crosses possible (ns x nd) 
+# with no offspring each 
+
+sire<-rep(1:ns,each=nd*no)
+dam<-rep(ns+1:nd,each=no,ns)
+sire<-rep(0:(np-1)*(nd+ns),each=(nd*ns*no))+sire
+dam<-rep(0:(np-1)*(nd+ns),each=(nd*ns*no))+dam
+# need to have the parents of founders as NA
+sire<-c(rep(NA,nft),sire)
+dam<-c(rep(NA,nft),dam)
+nt<-length(sire)
+#create the pedigree, 
+pedi<-data.frame(ind=1:nt,sire,dam)
+
+
+nfounders<-rbind(founders[,,1],founders[,,2])
+
+###########################################################
+###########################################################
+
+genos.F1<-drop.along.ped(pedi,founders.genotypes = nfounders,
+			                          nloc=nl,maplength=1000)
+
+#dosages for F1
+dos.F1<-genos.F1[,,1]+genos.F1[,,2]
+
+qtlsL<-1:nlq
+neutL<-(1+nlq):nl
+
+if(neut) {qtlsL<-sample(neutL,size=nlq)}
+
+Y<-rowSums(dos.F1[,qtlsL]-1)*0.2+rnorm(nrow(dos.F1))
+
+
+## -----------------------------------------------------------------
+#matching for F1
+M.F1<-matching(dos.F1[,neutL])
+
+#kinship estimated from markers for F1
+k.F1.g<-beta.dosage(M.F1,MATCHING=TRUE)
+
+
+nf<- -c(1:nft)
+
+ni<-ns+nd
+#mean kinship of founders in each pop
+mean.pop.kinship<-unlist(lapply(0:(np-1),function(x) mean(mat2vec(k.F1.g[x*ni+1:ni,x*ni+1:ni]))))
+
+nitF1<-nrow(k.F1.g)
+#Numbers of F1 per pop
+nipF1<-ns*nd*no
+k.F1.g.n<-matrix(0,nrow=nitF1,ncol=nitF1)
+# substract mean kinship per pop to inds in the pop, 
+# first founders and then F1
+for (i in 0:(np-1)){
+	  #founders
+	  k.F1.g.n[i*ni+1:ni,i*ni+1:ni]<-
+		      (k.F1.g[i*ni+1:ni,i*ni+1:ni]-mean.pop.kinship[i+1])/
+		          (1-mean.pop.kinship[i+1])
+		    #F1
+		    k.F1.g.n[nf,nf][i*nipF1+1:nipF1,i*nipF1+1:nipF1]<-
+			        (k.F1.g[nf,nf][i*nipF1+1:nipF1,i*nipF1+1:nipF1]-mean.pop.kinship[i+1])/
+				    (1-mean.pop.kinship[i+1])  
+}
+
+fst.founders<-fs.dosage(M.F1[1:nft,1:nft],pop=rep(1:np,each=ni),matching=TRUE)
+
+minFij<-min(mat2vec(fst.founders$FsM))
+Theta.P<-(fst.founders$FsM-minFij)/(1-minFij)
+
+The.M<-matrix(0,nrow=np*nipF1,ncol=np*nipF1)
+for (i in 0:(np-1)){
+	  The.M[i*nipF1+1:nipF1,i*nipF1+1:nipF1]<-
+		      hierfstat::kinship2grm(k.F1.g.n)[nf,nf][i*nipF1+1:nipF1,i*nipF1+1:nipF1]*(1-Theta.P[i+1,i+1])  
+}
+
+NegEigVal<-FALSE
+
+two.Theta.P<-2*Theta.P
+#eigen(The.M)$values  # all positives
+if (sum(eigen(two.Theta.P)$values<=0)>0) {NegEigVal=TRUE;two.Theta.P<-Matrix::nearPD(two.Theta.P)$mat}
+
+#############################
+#############################
+
+nrep<-nboot
+
+##setting up the anova for NCII
+
+popn<-factor(rep(1:np,each=(ns*nd*no)))
+siren<-rep(1:ns,each=nd*no)
+damn<-rep(1:nd,each=no,ns)
+
+#y<-rnorm(ns*nd*no*np)
+dat<-data.frame(Y=Y[nf],pop=popn,sire=factor(rep(siren,np)),dam=factor(rep(damn,np)))
+my.anova<-anova(aov(Y~pop/(sire+dam),data=dat))  #assuming no dominance
+MSs<-my.anova[,3]
+DFs<-my.anova[,1]
+MSsire<-MSs[2]
+MSdam<-MSs[3]
+MSpop<-MSs[1]
+MSwithin<-MSs[4]
+DFsire<-DFs[2]
+DFdam<-DFs[3]
+DFpop<-DFs[1]
+DFwithin<-DFs[4]
+
+#to modify if needs be
+Fst<-fst.founders$Fs[2,np+1]
+
+get.rand.fst<-function(dos,pop){
+  nl<-ncol(dos)
+  np<-length(table(pop))
+  x<-sample(nl,size=nl,replace=TRUE)
+  hierfstat::fst.dosage(dos[,x],pop=pop)[np+1]
+  }
+
+fst.hat<-replicate(nrep,get.rand.fst(dos.F1[1:nft,],rep(1:np,each=ni)))
+
+#to get MSPopNeutral
+x.hat<-fst.hat/(1-fst.hat)
+
+MSsire.hat<-MSsire/DFsire*rchisq(nrep,DFsire)
+MSdam.hat<-MSdam/DFdam*rchisq(nrep,DFdam)
+MSwithin.hat<-MSwithin/DFwithin*rchisq(nrep,DFwithin)
+
+#estimated variance components for dams and sires
+sigA.dam<-(MSdam-MSwithin)/(ns*no)
+sigA.sire<-(MSsire-MSwithin)/(nd*no)
+
+sigA.dam.hat<-(MSdam.hat-MSwithin.hat)/(ns*no)
+sigA.sire.hat<-(MSsire.hat-MSwithin.hat)/(nd*no)
+
+#needed?
+sigA.hat<-(sigA.dam.hat+sigA.sire.hat)/2
+VA.hat<-4*sigA.hat
+
+#only place to get variablity for fst I think
+MSpopNeutral<-MSwithin+sigA.dam*ns*no+sigA.sire*nd*no+4*sigA.dam*(ns*nd*no*Fst/(1-Fst))+4*sigA.sire*(nd*ns*no*Fst/(1-Fst))
+MSpopneutral.hat<-MSpopNeutral/DFpop*rchisq(nrep,df=DFpop)  
+
+#estimated component of variance for pop
+sigA.pop<-(MSpop-sigA.dam*no*ns-sigA.sire*no*nd-MSwithin)/(no*ns*nd)
+
+#estimated qst, assuming no maternal nor dominance effects
+QST<-sigA.pop/(sigA.pop+4*sigA.sire+4*sigA.dam)
+
+
+sigA.pop.neutral.hat<-(MSpopneutral.hat-sigA.dam.hat*no*ns-sigA.sire.hat*no*nd-MSwithin.hat)/(no*ns*nd)
+
+#the null distribution for QST
+#could be easily expanded at no computing costs
+#by randomizing independently all the sources of variations
+
+QST.neutral.hat<-sigA.pop.neutral.hat/(sigA.pop.neutral.hat+4*sigA.dam.hat+4*sigA.sire.hat)
+
+tmp.qstwg<-data.frame(fst.star=fst.hat,qstneut.star=QST.neutral.hat,sApopneut.star=sigA.pop.neutral.hat,
+sASire.star=sigA.sire.hat,sAdam.star=sigA.dam.hat,sAwithin.star=MSwithin.hat)
+
+
+five.num.qstgw<-quantile(QST.neutral.hat-QST- fst.hat + Fst,c(0.025,0.25,0.5,0.75,0.975))
+pval.qstgw.neg<-(sum(QST.neutral.hat-fst.hat <= QST- Fst )+1)/(nrep+1)
+pval.qstgw.pos<-(sum(QST.neutral.hat - fst.hat >= QST - Fst)+1)/(nrep+1)
+
+if(debug){
+c(MSpop,MSpopNeutral,Fst,QST)
+browser()
+}
+#####################################################
+#####################################################
+#####################################################
+
+pop<-c(rep(1:np,each=(ns*nd*no)))
+ind<-1:(ns*nd*no*np)
+dat<-data.frame(pop=pop,ind=ind,Y=Y[nf])
+
+if(sum(eigen(The.M)$values<=0)>0) {NegEigVal<-TRUE; The.M<-Matrix::nearPD(The.M)$mat}
+
+dimnames(The.M)[[2]]<-dimnames(The.M)[[1]]<-1:(ns*nd*no*np)
+
+dimnames(two.Theta.P)[[1]]<-dimnames(two.Theta.P)[[2]]<-as.character(1:np)
+
+
+brms_mf<-brm(Y~1+(1| gr(pop,cov=two.Theta.P))+(1| gr(ind,cov=The.M)),data=dat,data2=list(two.Theta.P=two.Theta.P,The.M=The.M),family=gaussian(),chains=4,cores=4,iter=niter,warmup=nwarm,thin=2)
+
+
+tmp<-data.frame(matrix(unlist(lapply(VarCorr(brms_mf,summary=FALSE),function(x) x$sd^2)),ncol=3))
+names(tmp)<-names(VarCorr(brms_mf,summary=FALSE))
+#quant.ancVAPop<-c(mean(tmp$pop),quantile(tmp$pop,c(0.025,0.25,0.5,0.75,0.975)))
+#quant.ancVAInd<-c(mean(tmp$ind),quantile(tmp$ind,c(0.025,0.25,0.5,0.75,0.975)))
+#quant.VE<-c(mean(tmp[,3]),quantile(tmp[,3],c(0.025,0.25,0.5,0.75,0.975)))
+#get median, 2.5% and 97.5% quantiles
+#quant.ancVA.diff<-c(mean(tmp$pop-tmp$ind),quantile(tmp$pop-tmp$ind,c(0.025,0.25,0.5,0.75,0.975)))
+
+
+#par(mfrow=c(2,2))
+#hist(tmp$ind);hist(tmp$pop);hist(tmp$residual__);hist(log(tmp$pop/tmp$ind))
+
+five.num<-quantile(log(tmp$pop/tmp$ind),c(0.025,0.25,0.5,0.75,0.975))
+pval.pos<-mean(log(tmp$pop/tmp$ind)<=0)
+pval.neg<-mean(log(tmp$pop/tmp$ind)>=0)
+
+
+##simple covariance within, not discounting for (1-F)
+
+CovW<-matrix(0,nrow=np*nipF1,ncol=np*nipF1)
+for (i in 0:(np-1)){
+  CovW[i*nipF1+1:nipF1,i*nipF1+1:nipF1]<-
+    hierfstat::kinship2grm(k.F1.g.n)[nf,nf][i*nipF1+1:nipF1,i*nipF1+1:nipF1]
+}
+
+if(sum(eigen(CovW)$values<=0)>0) {NegEigVal<-TRUE;CovW<-Matrix::nearPD(CovW)$mat}
+
+dimnames(CovW)[[2]]<-dimnames(CovW)[[1]]<-1:(ns*nd*no*np)
+
+
+##bayesian qst model
+brms_qst<-brm(Y~1+(1|pop)+(1 | gr(ind,cov=CovW)),data=dat,data2=list(CovW=CovW),family=gaussian(),chains=4,cores=4,iter=niter,warmup=nwarm,thin=2)
+
+tmp.qst<-data.frame(matrix(unlist(lapply(VarCorr(brms_qst,summary=FALSE),function(x) x$sd^2)),ncol=3))
+names(tmp.qst)<-names(VarCorr(brms_qst,summary=FALSE))
+tmp.qst$qst<-with(tmp.qst,pop/(pop+2*ind))
+tmp.qst$fst<-rep(fst.founders$Fs[2,np+1],nrow(tmp.qst))
+
+five.num.qst<-quantile(tmp.qst$qst-Fst,c(0.025,0.25,0.5,0.75,0.975))
+
+pval.qst.pos<-mean(tmp.qst$qst-Fst<=0)
+pval.qst.neg<-mean(tmp.qst$qst-Fst>=0)
+
+
+
+return(list(esti=tmp,estiqst=tmp.qst,estiqstwg=tmp.qstwg,
+NegEigVal=NegEigVal,
+five.num=five.num,pval.neg=pval.neg,pval.pos=pval.pos,
+five.num.qst=five.num.qst,pval.qst.neg=pval.qst.neg,pval.qst.pos=pval.qst.pos,
+five.num.qstgw=five.num.qstgw,pval.qstgw.neg=pval.qstgw.neg,pval.qstgw.pos=pval.qstgw.pos,
+Fst=Fst,Qst=QST))
+}
+
+####################################################################
+####################################################################
+
+LAVAdapt<-function(Phenotype,M,two.theta.P,
+                   pop=NULL,np=NULL,ns=NULL,nd=NULL,no=NULL,
+				   chains=4,cores=4,iter=6000,warmup=2000,thin=2){
+
+
+if(is.null(pop)) {
+      pop<-c(rep(1:np,each=(ns*nd*no)))
+      ind<-1:(ns*nd*no*np)
+	  } else ind<-1:length(Phenotype)
+	  
+dat<-data.frame(pop=pop,ind=ind,Y=Phenotype)
+
+k.F1.g<-beta.dosage(M,MATCHING=TRUE)
+
+
+
+if(sum(eigen(The.M)$values<=0)>0) {NegEigVal<-TRUE; The.M<-Matrix::nearPD(The.M)$mat}
+
+dimnames(The.M)[[2]]<-dimnames(The.M)[[1]]<-1:ind
+
+dimnames(two.Theta.P)[[1]]<-dimnames(two.Theta.P)[[2]]<-as.character(1:nrow(two.Theta.P))
+
+
+brms_mf<-brms::brm(Y~1+(1| gr(pop,cov=two.Theta.P))+
+              (1| gr(ind,cov=The.M)),data=dat,
+			  data2=list(two.Theta.P=two.Theta.P,The.M=The.M),
+			  family=gaussian(),chains=chains,cores=cores,iter=iter,warmup=warmup,thin=tin)
+
+
+tmp<-data.frame(matrix(unlist(lapply(VarCorr(brms_mf,summary=FALSE),function(x) x$sd^2)),ncol=3))
+names(tmp)<-names(VarCorr(brms_mf,summary=FALSE))
+#quant.ancVAPop<-c(mean(tmp$pop),quantile(tmp$pop,c(0.025,0.25,0.5,0.75,0.975)))
+#quant.ancVAInd<-c(mean(tmp$ind),quantile(tmp$ind,c(0.025,0.25,0.5,0.75,0.975)))
+#quant.VE<-c(mean(tmp[,3]),quantile(tmp[,3],c(0.025,0.25,0.5,0.75,0.975)))
+#get median, 2.5% and 97.5% quantiles
+#quant.ancVA.diff<-c(mean(tmp$pop-tmp$ind),quantile(tmp$pop-tmp$ind,c(0.025,0.25,0.5,0.75,0.975)))
+
+
+#par(mfrow=c(2,2))
+#hist(tmp$ind);hist(tmp$pop);hist(tmp$residual__);hist(log(tmp$pop/tmp$ind))
+
+five.num<-quantile(log(tmp$pop/tmp$ind),c(0.025,0.25,0.5,0.75,0.975))
+pval.pos<-mean(log(tmp$pop/tmp$ind)<=0)
+pval.neg<-mean(log(tmp$pop/tmp$ind)>=0)
+
+return(list(estivar=tmp,five.num=five.num,pval.pos=pval.pos,pval.neg=pval.neg)
+
+}
+
+
+QstFstgwNCII<-function(Phenotype,np,ns,nd,no,nrep){
+popn<-factor(rep(1:np,each=(ns*nd*no)))
+siren<-rep(1:ns,each=nd*no)
+damn<-rep(1:nd,each=no,ns)
+
+#y<-rnorm(ns*nd*no*np)
+dat<-data.frame(Y=Y[nf],pop=popn,sire=factor(rep(siren,np)),dam=factor(rep(damn,np)))
+my.anova<-anova(aov(Y~pop/(sire+dam),data=dat))  #assuming no dominance
+MSs<-my.anova[,3]
+DFs<-my.anova[,1]
+MSsire<-MSs[2]
+MSdam<-MSs[3]
+MSpop<-MSs[1]
+MSwithin<-MSs[4]
+DFsire<-DFs[2]
+DFdam<-DFs[3]
+DFpop<-DFs[1]
+DFwithin<-DFs[4]
+
+#to modify if needs be
+Fst<-fst.founders$Fs[2,np+1]
+
+get.rand.fst<-function(dos,pop){
+  nl<-ncol(dos)
+  np<-length(table(pop))
+  x<-sample(nl,size=nl,replace=TRUE)
+  hierfstat::fst.dosage(dos[,x],pop=pop)[np+1]
+  }
+
+fst.hat<-replicate(nrep,get.rand.fst(dos.F1[1:nft,],rep(1:np,each=ni)))
+
+#to get MSPopNeutral
+x.hat<-fst.hat/(1-fst.hat)
+
+MSsire.hat<-MSsire/DFsire*rchisq(nrep,DFsire)
+MSdam.hat<-MSdam/DFdam*rchisq(nrep,DFdam)
+MSwithin.hat<-MSwithin/DFwithin*rchisq(nrep,DFwithin)
+
+#estimated variance components for dams and sires
+sigA.dam<-(MSdam-MSwithin)/(ns*no)
+sigA.sire<-(MSsire-MSwithin)/(nd*no)
+
+sigA.dam.hat<-(MSdam.hat-MSwithin.hat)/(ns*no)
+sigA.sire.hat<-(MSsire.hat-MSwithin.hat)/(nd*no)
+
+#needed?
+sigA.hat<-(sigA.dam.hat+sigA.sire.hat)/2
+VA.hat<-4*sigA.hat
+
+#only place to get variablity for fst I think
+MSpopNeutral<-MSwithin+sigA.dam*ns*no+sigA.sire*nd*no+4*sigA.dam*(ns*nd*no*Fst/(1-Fst))+4*sigA.sire*(nd*ns*no*Fst/(1-Fst))
+MSpopneutral.hat<-MSpopNeutral/DFpop*rchisq(nrep,df=DFpop)  
+
+#estimated component of variance for pop
+sigA.pop<-(MSpop-sigA.dam*no*ns-sigA.sire*no*nd-MSwithin)/(no*ns*nd)
+
+#estimated qst, assuming no maternal nor dominance effects
+QST<-sigA.pop/(sigA.pop+4*sigA.sire+4*sigA.dam)
+
+
+sigA.pop.neutral.hat<-(MSpopneutral.hat-sigA.dam.hat*no*ns-sigA.sire.hat*no*nd-MSwithin.hat)/(no*ns*nd)
+
+#the null distribution for QST
+#could be easily expanded at no computing costs
+#by randomizing independently all the sources of variations
+
+QST.neutral.hat<-sigA.pop.neutral.hat/(sigA.pop.neutral.hat+4*sigA.dam.hat+4*sigA.sire.hat)
+
+tmp.qstwg<-data.frame(fst.star=fst.hat,qstneut.star=QST.neutral.hat,sApopneut.star=sigA.pop.neutral.hat,
+sASire.star=sigA.sire.hat,sAdam.star=sigA.dam.hat,sAwithin.star=MSwithin.hat)
+
+
+five.num.qstgw<-quantile(QST.neutral.hat-QST- fst.hat + Fst,c(0.025,0.25,0.5,0.75,0.975))
+pval.qstgw.neg<-(sum(QST.neutral.hat-fst.hat <= QST- Fst )+1)/(nrep+1)
+pval.qstgw.pos<-(sum(QST.neutral.hat - fst.hat >= QST - Fst)+1)/(nrep+1)
+
+}
+
+QstFstG<-function(Phenotype,pop,GRM){
+#
+# Estimate Qst using lmm.aireml  
+# needs as input:
+# Phenotype: the phenotypes from common garden experiments
+# pop: a vector containing the id of the population to which the individual belongs
+# GRM: a block matrix containing on the block diagonal the relatedness of inds
+#      in each population
+}
+
+get.The.M<-function(M){
+
+}
