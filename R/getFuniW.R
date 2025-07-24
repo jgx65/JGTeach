@@ -37,7 +37,7 @@ get.funiw<-function(dos){
   if(!class(dos)[[1]]=="bed.matrix") stop("Argument must be of class bed.matrix. Exiting")
   p<-dos@p
   het<-2*p*(1-p)
-  res<-apply(gaston:::as.matrix(dos),1,function(x) {
+  res<-apply(gaston::as.matrix(dos),1,function(x) {
                                     nas<-which(is.na(x)); 
 									if(length(nas)>0){
 									xs<-x[-nas];

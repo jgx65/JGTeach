@@ -4,7 +4,7 @@
 \alias{get.efst}
 \title{calculates Coancestries and FST from demographic parameters}
 \usage{
-get.efst(Nindsperpop,npops,migmat,mutrate,ngen,theta=NULL)
+get.efst(Nindsperpop,npops,migmat,mutrate,ngen,theta0=NULL)
 }
 \arguments{
 \item{Nindsperpop}{vector of population sizes. If only a scalar, 
@@ -18,7 +18,7 @@ all populations assumed to have the same sizes}
 
 \item{ngen}{number of generations}
 
-\item{theta}{initial coancestries, assumed to be 0 if not specified}
+\item{theta0}{initial coancestries, assumed to be 0 if not specified}
 }
 \description{
 calculates Coancestries and FST from demographic parameters

@@ -41,7 +41,7 @@
 buildped.2sexes<-function(founders.m=50,founders.f=50,fert=2.0,death.rate=0.2,breed.prop=0.5,male.prop=0.5,n.tstep=10){
   draw.parents<-function(dams,sires,fert,prop.breed,sanc){
 
-    nbabs<-rpois(length(dams),fert)
+    nbabs<-stats::rpois(length(dams),fert)
     allbabs<-sum(nbabs)
     thisgen.ped<-data.frame(ind=integer(allbabs),
                             dam=integer(allbabs),
@@ -83,7 +83,7 @@ buildped.2sexes<-function(founders.m=50,founders.f=50,fert=2.0,death.rate=0.2,br
 
     if(length(repro.males)==0 | length(repro.females)==0) stop("No mates available. exiting")
 
-    thisgen.ped<-draw.parents(ped$ind[alive & ped$sex==2],ped$ind[repro.males],fert,prop.breed,sanc)
+    thisgen.ped<-draw.parents(ped$ind[alive & ped$sex==2],ped$ind[repro.males],fert,breed.prop,sanc)
     #put mortality here
     dead<-sample(c(FALSE,TRUE),size=sum(alive),replace=TRUE,prob=c(death.rate,1-death.rate))
     alive[which(alive)]<-dead

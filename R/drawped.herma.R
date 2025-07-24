@@ -36,7 +36,7 @@
 buildped.herma<-function(founders=20,fert=0.5,death.rate=0.5,self.prop=0.5,n.tstep=10){
   draw.parents<-function(parents,fert,self.prop,sanc){
     np<-length(parents)
-    nbabs<-rpois(np,fert)
+    nbabs<-stats::rpois(np,fert)
     allbabs<-sum(nbabs)
     thisgen.ped<-data.frame(ind=integer(allbabs),
                             par1=integer(allbabs),

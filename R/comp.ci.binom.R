@@ -29,15 +29,15 @@
 #' @export
 comp.ci.binom<-function(p=0.5,n=1000,nboot=1000,digits=4){
   #illustrates slides 48 and followings
-  x<-rbinom(1,n,p)
+  x<-stats::rbinom(1,n,p)
   p.hat<-x/n
   sd.p<-(p.hat*(1-p.hat)/n)^0.5
   norm.ci<-round(c(p.hat-1.96*sd.p,p.hat+1.96*sd.p),digits=digits) #wald ci
-  exact.ci<-round(binom.test(x,n)$conf.int[1:2],digits=digits) #exact from binomial
+  exact.ci<-round(stats::binom.test(x,n)$conf.int[1:2],digits=digits) #exact from binomial
   bx<-numeric(nboot)
   ox<-numeric(n);ox[1:x]<-1
   for (i in 1:nboot) bx[i]<-sum(sample(ox,replace=TRUE))
-  boot.ci<-round(quantile(bx,c(0.025,0.975))/n,digits=digits) #empirical bootstrap ci
+  boot.ci<-round(stats::quantile(bx,c(0.025,0.975))/n,digits=digits) #empirical bootstrap ci
   return(list(p.hat=p.hat,norm.ci=norm.ci,boot.ci=boot.ci,exact.ci=exact.ci))
 }
 

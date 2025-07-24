@@ -41,7 +41,7 @@ drop.along.ped<-function(ped=ped,founders.genotypes=NULL,nloc=10000,maplength=20
   #maplength in Morgans
   drawgam<-function(dat){
     gs<-sample(2,1) # from which gamete to start
-    nbxo<-rpois(1,maplength) # nb cross overs
+    nbxo<-stats::rpois(1,maplength) # nb cross overs
     nbseg<-nbxo+1 # nb segments
     g<-(1:nbseg+gs)%%2 +1 # which chrom to read
     posxo<-sort(sample(nloc-1,nbxo))+.1 #position cross over

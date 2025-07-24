@@ -1,13 +1,11 @@
 Package: JGTeach
 Type: Package
 Title: JG Teaching material
-Version: 0.1.9
-Date: 2022-07-27
+Version: 0.2.1
+Date: 2025-07-24
 Author: Jerome Goudet [aut, cre]
 Maintainer: Jerome Goudet <jerome.goudet@unil.ch>
-Description: A collection of (documented) functions
-    useful for teaching population genetics and quantitative genetics.
-	They might make their way to Hierfstat one day
+Description: A collection of (documented) functions useful for teaching population genetics and quantitative genetics.  They might make their way to Hierfstat one day.
 Imports:
     hierfstat,gaston,ade4,adegenet,gaston,gtools,methods
 License: GPL (>=2)

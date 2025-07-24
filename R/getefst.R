@@ -1,6 +1,6 @@
 #' calculates Coancestries and FST from demographic parameters
 #' 
-#' @usage  get.efst(Nindsperpop,npops,migmat,mutrate,ngen,theta=NULL)
+#' @usage  get.efst(Nindsperpop,npops,migmat,mutrate,ngen,theta0=NULL)
 #'
 #' @param Nindsperpop vector of population sizes. If only a scalar, 
 #' all populations assumed to have the same sizes
@@ -8,7 +8,7 @@
 #' @param migmat migration matrix
 #' @param mutrate mutation rate
 #' @param ngen number of generations
-#' @param theta initial coancestries, assumed to be 0 if not specified
+#' @param theta0 initial coancestries, assumed to be 0 if not specified
 #'
 #' @value Coan a matrix of Coancestries
 #' @value EFst a matrix of FST, or mean coancestries relative to 
@@ -44,7 +44,7 @@ for (i in 1:ngen){
 }
 #theta
 
-Mb<-mean(mat2vec(theta))
+Mb<-mean(hierfstat::mat2vec(theta))
 return(list(Coan=theta,EFst=(theta-Mb)/(1-Mb)))
 }
 

@@ -47,7 +47,7 @@ ibd2dos<-function(gametes,n.founders,g.founders=NULL,b1=1,b2=10){
      if((dim(g.founders)[1]!=nf2) | (dim(g.founders)[2]!=nl))
          stop("Error, dim of g.founders must match be 2n.founders x nl. Exiting")
 
-  if (is.null(g.founders)) nA<-round(rbeta(nl,b1,b2)*nf2,digits=0)
+  if (is.null(g.founders)) nA<-round(stats::rbeta(nl,b1,b2)*nf2,digits=0)
 
   for (il in 1:nl){
     if (!is.null(g.founders))

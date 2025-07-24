@@ -27,7 +27,7 @@
 #' @export
 
 get.matchingT.dom<-
-function(bed,nloc=100000,nb.cores=4){
+function(bed,nloc=100000,nb.cores=1){
 matchingD<-function(dos){
     dos <- gaston::as.matrix(dos)
         NAs<-sum(is.na(dos))
@@ -50,7 +50,7 @@ matchingD<-function(dos){
 if (class(bed)[[1]] != "bed.matrix") stop("bed must be of class bed.matrix. Exiting")
 
 if (dim(bed)[2]<=nloc){
-  matching(bed)$Mij
+  matchingD(bed)$Mij
   }
 else {
    nl<-dim(bed)[2]

@@ -59,20 +59,20 @@ make.traits<-function(bed=bed,n.causal=1000,h2=0.5,minp=0.01,sel=0.0,pop=NULL,po
     ef.size<-ef.size*w.f.eff.siz
   }
   gval<-as.numeric(gaston::as.matrix(bed[,causal])%*%ef.size)
-  va<-var(gval)
+  va<-stats::var(gval)
   phenog<-gval+stats::rnorm(nrow(bed),sd=(va*(1/h2-1))^.5)
   if(!is.null(pop)){
     if (is.null(popid)) popid<-bed@ped$famid
     popid<-factor(popid)
     npop<-nlevels(popid)
-    pop.efsize<-stats::rnorm(npop,sd=sd(phenog)*pop^0.5)
+    pop.efsize<-stats::rnorm(npop,sd=stats::sd(phenog)*pop^0.5)
     for (i in 1:npop){
       x<-levels(popid)[i]
       phenog[popid==x]<-phenog[popid==x]+pop.efsize[i]
     }
   }
   phenog<-phenog-mean(phenog)
-  h2hat<-va/var(phenog) #h2
+  h2hat<-va/stats::var(phenog) #h2
   return(list(h2=h2,h2hat=h2hat,
               trait=data.frame(gval=gval-mean(gval),pheno=phenog),
               causal=data.frame(chr=bed@snps$chr[causal],id=bed@snps$id[causal],efs=ef.size)))
